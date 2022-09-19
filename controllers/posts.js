@@ -48,13 +48,59 @@ module.exports = {
 
   // Posts Update
   async postUpdate(req, res, next) {
-    let post = await Post.findByIdAndUpdate(req.params.id, req.body.post);
+    let post = await Post.findById(req.params.id);
+
+    // check if there's any image for deletion
+    if (req.body.deleteImages && req.body.deleteImages.length) {
+      let deleteImages = req.body.deleteImages;
+
+      for (let public_id of deleteImages) {
+        // delete image from cloudinary
+        await cloudinary.v2.uploader.destroy(public_id);
+        
+        // delete image from post.images
+        for (let image of post.images) {
+          if (image.public_id === public_id) {
+            let index = post.images.indexOf(image);
+            post.images.splice(index, 1);
+          }
+        }
+      }
+    }
+
+    // check if there are any new images for upload
+    if (req.files) {
+      for (let file of req.files) {
+        // upload image to cloudinary
+        let image = await cloudinary.v2.uploader.upload(file.path);
+
+        // add image to post.images array
+        post.images.push({
+          url: image.secure_url,
+          public_id: image.public_id
+        });
+      }
+    }
+
+    // update the post with any new properties
+    post.title = req.body.post.title;
+    post.price = req.body.post.title;
+    post.description = req.body.post.description;
+    post.location = req.body.post.location;
+
+    await post.save();
     res.redirect(`/posts/${post.id}`)
   },
 
   // Posts Destroy
   async postDestroy(req, res, next) {
-    await Post.findByIdAndRemove(req.params.id);
+    let post = await Post.findById(req.params.id);
+
+    for (let image of post.images) {
+      await cloudinary.v2.uploader.destroy(image.public_id);
+    }
+
+    await post.remove();
     res.redirect('/posts');
   }
 }
