@@ -11,6 +11,8 @@ const User = require('./models/user');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+// const seedPosts = require('./seeds');
+// seedPosts();
 
 // Require routes
 const indexRouter = require('./routes/index');
@@ -44,7 +46,7 @@ app.use(methodOverride('_method'));
 
 // Configure Passport and Sessions
 app.use(session({
-  secret: 'bcrnjtrhkulhj',
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true
 }));
