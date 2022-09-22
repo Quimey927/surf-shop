@@ -19,7 +19,7 @@
 
 <div>
   <% for (let image of post.images) { %>
-    <img src="<%= image.url %>" alt="Surf board image" width="200px">
+    <img src="<%= image.path %>" alt="Surf board image" width="200px">
   <% } %>
 </div>
 
@@ -104,3 +104,7 @@
   <% } %>
   <hr>
 <% }) %>
+
+<script>
+  mapboxgl.accessToken = "<%= mapBoxToken %>";
+</script>

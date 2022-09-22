@@ -1,23 +1,20 @@
 const Post = require('../models/post');
 
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const geocodingClient = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocodingClient = mbxGeocoding({ accessToken: mapBoxToken });
 
-const cloudinary = require('cloudinary');
-cloudinary.config({
-  cloud_name: 'dejhmgbbc',
-  api_key: '857412884752558',
-  api_secret: process.env.CLOUDINARY_SECRET
-});
+const { cloudinary } = require('../cloudinary');
 
 module.exports = {
   // Posts Index
   async postIndex(req, res, next) {
     let posts = await Post.paginate({}, {
       page: req.query.page || 1,
-      limit: 10
+      limit: 10,
+      sort: { '_id': -1}
     });
-    res.render('posts/index', { posts, title: 'Posts Index' });
+    res.render('posts/index', { posts, mapBoxToken, title: 'Posts Index' });
   },
 
   // Posts New
@@ -30,10 +27,9 @@ module.exports = {
     req.body.post.images = [];
 
     for (let file of req.files) {
-      let image = await cloudinary.v2.uploader.upload(file.path);
       req.body.post.images.push({
-        url: image.secure_url,
-        public_id: image.public_id
+        path: file.path,
+        filename: file.filename
       });
     }
 
@@ -44,9 +40,11 @@ module.exports = {
       })
       .send();
 
-    req.body.post.coordinates = response.body.features[0].geometry.coordinates;
+    req.body.post.geometry = response.body.features[0].geometry;
 
-    let post = await Post.create(req.body.post);
+    const post = new Post(req.body.post);
+		post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
+    await post.save();
     req.session.success = 'Post created successfully!';
     res.redirect(`/posts/${post.id}`)
   },
@@ -63,7 +61,7 @@ module.exports = {
     });
 
     const floorRating = post.calculateAvgRating();
-    res.render('posts/show', { post, floorRating });
+    res.render('posts/show', { post, mapBoxToken, floorRating });
   },
 
   // Posts Edit
@@ -80,13 +78,13 @@ module.exports = {
     if (req.body.deleteImages && req.body.deleteImages.length) {
       let deleteImages = req.body.deleteImages;
 
-      for (let public_id of deleteImages) {
+      for (let filename of deleteImages) {
         // delete image from cloudinary
-        await cloudinary.v2.uploader.destroy(public_id);
+        await cloudinary.uploader.destroy(filename);
         
         // delete image from post.images
         for (let image of post.images) {
-          if (image.public_id === public_id) {
+          if (image.filename === filename) {
             let index = post.images.indexOf(image);
             post.images.splice(index, 1);
           }
@@ -97,13 +95,10 @@ module.exports = {
     // check if there are any new images for upload
     if (req.files) {
       for (let file of req.files) {
-        // upload image to cloudinary
-        let image = await cloudinary.v2.uploader.upload(file.path);
-
         // add image to post.images array
         post.images.push({
-          url: image.secure_url,
-          public_id: image.public_id
+          path: file.path,
+          filename: file.filename
         });
       }
     }
@@ -117,7 +112,7 @@ module.exports = {
         })
         .send();
 
-      post.coordinates = response.body.features[0].geometry.coordinates;
+      post.geometry = response.body.features[0].geometry;
       post.location = req.body.post.location;
     }
 
@@ -125,6 +120,8 @@ module.exports = {
     post.title = req.body.post.title;
     post.price = req.body.post.title;
     post.description = req.body.post.description;
+    post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
+
     
     await post.save();
     res.redirect(`/posts/${post.id}`)
@@ -135,7 +132,7 @@ module.exports = {
     let post = await Post.findById(req.params.id);
 
     for (let image of post.images) {
-      await cloudinary.v2.uploader.destroy(image.public_id);
+      await cloudinary.uploader.destroy(image.filename);
     }
 
     await post.remove();

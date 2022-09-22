@@ -15,9 +15,9 @@
     <input type="file" id="imageUpload" accept="images/*" name="images" multiple />
     <div>
       <% post.images.forEach(function(image, i) { %>
-        <img src="<%= image.url %>" alt="" width="100px">
+        <img src="<%= image.path %>" alt="" width="100px">
         <label for="image<%= i %>">Delete?</label>
-        <input type="checkbox" name="deleteImages[]" class="imageDeleteCheckbox" id="image<%= i %>" value="<%= image.public_id %>">
+        <input type="checkbox" name="deleteImages[]" class="imageDeleteCheckbox" id="image<%= i %>" value="<%= image.filename %>">
       <% }); %>
     </div>
   </div>

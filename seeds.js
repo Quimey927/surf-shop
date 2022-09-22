@@ -1,24 +1,36 @@
 const Post = require('./models/post');
 const loremIpsum = require('lorem-ipsum').loremIpsum;
+const cities = require('./cities');
 
 async function seedPosts() {
-  await Post.remove({});
+	await Post.remove({});
 
-  for (let i = 1; i <= 40; i++) {
-    let post = {
-      title: `Hola_${i}`,
-      price: 9,
-      description: loremIpsum(),
-      author: {
-        '_id': '6329e578468614014d6f1700',
-        'username': 'ian',
-      },
-      location: 'Dallas, Texas',
-      coordinates: [-96.803914, 32.792206]
-    } 
-    await Post.create(post);
-  }
-  console.log('40 new posts created');
+	for (let i = 1; i <= 600; i++) {
+		const random1000 = Math.floor(Math.random() * 1000);
+		const title = `Post number ${i}`;
+		const description = loremIpsum();
+
+		const postData = {
+			title,
+			description,
+			price: 9.99,
+			location: `${cities[random1000].city}, ${cities[random1000].state}`,
+			geometry: {
+				type: 'Point',
+				coordinates: [cities[random1000].longitude, cities[random1000].latitude]
+			},
+			author: {
+				_id: '6329e578468614014d6f1700',
+				username: 'ian'
+			}
+		}
+
+		const post = new Post(postData);
+		post.properties.description = `<strong><a href="/posts/${post._id}">${title}</a></strong><p>${post.location}</p><p>${description.substring(0, 20)}...</p>`;
+
+		await post.save();
+	}
+	console.log('600 new posts created');
 }
 
 module.exports = seedPosts;

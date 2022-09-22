@@ -1,9 +1,7 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoicXVpbWV5OTI3IiwiYSI6ImNsN2RpMW8zejE5am0zcXFmdzNydHJodWcifQ.w5wvIHSWIXfQvbLhB2a3jA';
-    
-const map = new mapboxgl.Map({
+  const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/light-v10',
-  center: post.coordinates,
+  center: post.geometry.coordinates,
   zoom: 5
 });
 
@@ -14,7 +12,7 @@ el.className = 'marker';
 
 // make a marker for our location and add to the map
 new mapboxgl.Marker(el)
-  .setLngLat(post.coordinates)
+  .setLngLat(post.geometry.coordinates)
   .setPopup(
     new mapboxgl.Popup({ offset: 25 }) // add popups
       .setHTML(
