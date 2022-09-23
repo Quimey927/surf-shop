@@ -4,23 +4,28 @@
 
 <form action="/posts" method="POST" enctype="multipart/form-data">
   <div>
-    <input type="text" name="post[title]" placeholder="Title">
+    <label for="title">Title: </label>
+    <input type="text" id="title" name="post[title]" placeholder="Title">
   </div>
 
   <div>
-    <input type="text" name="post[price]" placeholder="Price">
+    <label for="price">Price: </label>
+    <input type="number" id="price" name="post[price]" step=".01" placeholder="Price">
   </div>
 
   <div>
-    <input type="file" accept="images/*" name="images" multiple />
+    <label for="imageUpload">Images: </label>
+    <input type="file" id="imageUpload" accept="images/*" name="images" multiple />
   </div>
 
   <div>
-    <textarea name="post[description]" placeholder="Description"></textarea>
+    <label for="description">Description: </label>
+    <textarea name="post[description]" id="description" placeholder="Description"></textarea>
   </div>
 
   <div>
-    <input type="text" name="post[location]" placeholder="Location">
+    <label for="location">Location: </label>
+    <input type="text" id="location" name="post[location]" placeholder="Location">
   </div>
 
   <input type="submit">

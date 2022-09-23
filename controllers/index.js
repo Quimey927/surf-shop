@@ -7,27 +7,54 @@ module.exports = {
   // GET /
   async landingPage(req, res, next) {
     let posts = await Post.find({});
-    res.render('index', { posts, mapBoxToken, title: 'Surf Shop - Home' });
+    return res.render('index', { posts, mapBoxToken, title: 'Surf Shop - Home' });
+  },
+
+  // GET /register
+  getRegister(req, res, next) {
+    res.render('register', { title: 'Register', username: '', email: '' });
   },
 
   // POST /register
   async postRegister(req, res, next) {
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      image: req.body.image
-    });
+    try {
+      const { email } = req.body;
+      const emailAlreadyExists = await User.findOne({ 'email': email });
+      if (emailAlreadyExists) {
+        throw new Error('A user with the given email is already registered');
+      }
+      const user = await User.register(new User(req.body), req.body.password);
+      req.login(user, (err) => {
+        if (err) return next(err);
+        req.session.success = `Welcome to Surf Shop, ${user.username}!`;
+        res.redirect('/');
+      });
+    } catch(err) {
+      const { username, email } = req.body;
+      let error = err.message;
+      res.render('register', { title: 'Register', username, email, error });
+    }
+  },
 
-    await User.register(newUser, req.body.password);
-    res.redirect('/');
+  // GET /login
+  getLogin(req, res, next) {
+    if (req.isAuthenticated()) return res.redirect('/');
+    if (req.query.returnTo) req.session.redirectTo = req.headers.referer;
+    res.render('login', { title: 'Login' });
   },
 
   // POST /login
-  postLogin(req, res, next) {
-    passport.authenticate('local', {
-      successRedirect: '/',
-      failureRedirect: '/login'
-    })(req, res, next);
+  async postLogin(req, res, next) {
+    const redirectUrl = req.session.redirectTo || '/';
+    delete req.session.redirectTo;
+    const { username, password } = req.body;
+    const { user, error } = await User.authenticate()(username, password);
+    if (!user && error) return next(error);
+    req.login(user, function(err) {
+      if (err) return next(err);
+      req.session.success = `Welcome back, ${username}!`;
+      res.redirect(redirectUrl);
+    });
   },
 
   // GET /logout

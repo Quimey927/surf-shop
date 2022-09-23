@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const express = require('express');
 const engine = require('ejs-mate');
 const path = require('path');
+const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
@@ -37,6 +38,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,14 +64,14 @@ passport.deserializeUser(User.deserializeUser());
 // set local variables middleware
 app.use(function(req, res, next) {
   // Only for development environment
-  req.user = {
-    '_id': '6329e578468614014d6f1700',
-    'username': 'ian'
-    //'_id': '632a139d71528225dc7dd389',
-    // 'username': 'ian2'
-    // '_id': '632b98dfda95dacac64d842d'
-    // 'username': 'ian3'
-  }
+  // req.user = {
+  //   '_id': '6329e578468614014d6f1700',
+  //   'username': 'ian',
+  //   '_id': '632a139d71528225dc7dd389',
+  //   'username': 'ian2',
+  //   '_id': '632b98dfda95dacac64d842d',
+  //   'username': 'ian3'
+  // }
   res.locals.currentUser = req.user;
   
   // set default page title 

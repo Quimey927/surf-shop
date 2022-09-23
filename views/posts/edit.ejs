@@ -4,14 +4,17 @@
 
 <form action="/posts/<%= post.id %>?_method=PUT" method="POST" id="postEditForm" enctype="multipart/form-data">
   <div>
-    <input type="text" name="post[title]" placeholder="Title" value="<%= post.title %>">
+    <label for="title">Title: </label>
+    <input type="text" id="title" name="post[title]" placeholder="Title" value="<%= post.title %>">
   </div>
 
   <div>
-    <input type="text" name="post[price]" placeholder="Price" value="<%= post.price %>">
+    <label for="price">Price: </label>
+    <input type="number" id="price" name="post[price]" step=".01" placeholder="Price" value="<%= post.price %>">
   </div>
 
   <div>
+    <label for="imageUpload">Images: </label>
     <input type="file" id="imageUpload" accept="images/*" name="images" multiple />
     <div>
       <% post.images.forEach(function(image, i) { %>
@@ -23,11 +26,13 @@
   </div>
 
   <div>
-    <textarea name="post[description]" placeholder="Description"><%= post.description %></textarea>
+    <label for="description">Description: </label>
+    <textarea name="post[description]" id="description" placeholder="Description"><%= post.description %></textarea>
   </div>
 
   <div>
-    <input type="text" name="post[location]" placeholder="Location" value="<%= post.location %>">
+    <label for="location">Location</label>
+    <input type="text" id="location" name="post[location]" placeholder="Location" value="<%= post.location %>">
   </div>
 
   <input type="submit">
