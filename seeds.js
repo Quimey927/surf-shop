@@ -19,7 +19,7 @@ async function seedPosts() {
 				type: 'Point',
 				coordinates: [cities[random1000].longitude, cities[random1000].latitude]
 			},
-			author: '632de08bae9fe3404a6be6c2'
+			author: '63320068c9bf3c5325a03d2d'
 		}
 
 		const post = new Post(postData);

@@ -4,7 +4,8 @@ const { asyncErrorHandler, isLoggedIn, isReviewAuthor } = require('../middleware
 const {
   reviewCreate,
   reviewUpdate,
-  reviewDestroy } = require('../controllers/reviews');
+  reviewDestroy
+} = require('../controllers/reviews');
 
 /* POST reviews create /posts/:id/reviews */
 router.post('/', asyncErrorHandler(reviewCreate));

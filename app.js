@@ -65,12 +65,8 @@ passport.deserializeUser(User.deserializeUser());
 app.use(function(req, res, next) {
   // Only for development environment
   // req.user = {
-  //   '_id': '6329e578468614014d6f1700',
-  //   'username': 'ian',
-  //   '_id': '632a139d71528225dc7dd389',
-  //   'username': 'ian2',
-  //   '_id': '632b98dfda95dacac64d842d',
-  //   'username': 'ian3'
+  //   '_id': '63320068c9bf3c5325a03d2d',
+  //   'username': 'Quimey',
   // }
   res.locals.currentUser = req.user;
   

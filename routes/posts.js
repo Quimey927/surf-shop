@@ -11,7 +11,8 @@ const {
   postShow,
   postEdit,
   postUpdate,
-  postDestroy } = require('../controllers/posts');
+  postDestroy
+} = require('../controllers/posts');
 
 /* GET posts index /posts */
 router.get('/', asyncErrorHandler(postIndex));
