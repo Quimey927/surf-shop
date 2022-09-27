@@ -1,6 +1,7 @@
 const Review = require('../models/review');
 const User = require('../models/user');
 const Post = require('../models/post');
+const { cloudinary } = require('../cloudinary');
 
 module.exports = {
   asyncErrorHandler: (fn) => 
@@ -10,7 +11,7 @@ module.exports = {
         .catch(next);
     },
 
-  isReviewAuthor: async(req, res, next) => {
+  isReviewAuthor: async (req, res, next) => {
     let review = await Review.findById(req.params.review_id);
     if (review.author.equals(req.user._id)) {
       return next();
@@ -26,7 +27,7 @@ module.exports = {
     res.redirect('/login');
   },
 
-  isAuthor: async(req, res, next) => {
+  isAuthor: async (req, res, next) => {
     const post = await Post.findById(req.params.id);
     if (post.author.equals(req.user._id)) {
       res.locals.post = post;
@@ -36,21 +37,23 @@ module.exports = {
     res.redirect('back');
   },
 
-  isValidPassword: async(req, res, next) => {
+  isValidPassword: async function(req, res, next) {
     const { user } = await User.authenticate()(req.user.username, req.body.currentPassword);
     if (user) {
       res.locals.user = user;
       next();
     } else {
+      this.deleteProfileImage(req);
       req.session.error = 'Incorrect current password!';
       return res.redirect('/profile');
     }
   },
 
-  changePassword: async(req, res, next) => {
+  changePassword: async function(req, res, next) {
     const { newPassword, passwordConfirmation } = req.body;
 
     if (newPassword && !passwordConfirmation) {
+      this.deleteProfileImage(req);
       req.session.error = 'Missing password confirmation!';
       return res.redirect('/profile');
     } else if (newPassword && passwordConfirmation) {
@@ -59,11 +62,16 @@ module.exports = {
         await user.setPassword(newPassword);
         next();
       } else {
+        this.deleteProfileImage(req);
         req.session.error = 'New passwords must match!';
         return res.redirect('/profile');
       }
     } else {
       next();
     }
+  },
+
+  deleteProfileImage: async (req) => {
+    if (req.file) await cloudinary.uploader.destroy(filename);
   }
 }

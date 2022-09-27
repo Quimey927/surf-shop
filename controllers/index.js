@@ -3,6 +3,8 @@ const Post = require('../models/post');
 const passport = require('passport');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const util = require('util');
+const { cloudinary } = require('../cloudinary');
+const { deleteProfileImage } = require('../middleware');
 
 module.exports = {
   // GET /
@@ -19,6 +21,13 @@ module.exports = {
   // POST /register
   async postRegister(req, res, next) {
     try {
+      if (req.file) {
+        const { path, filename } = req.file;
+        req.body.image = {
+          path,
+          filename
+        };
+      }
       const { email } = req.body;
       const emailAlreadyExists = await User.findOne({ 'email': email });
       if (emailAlreadyExists) {
@@ -31,6 +40,7 @@ module.exports = {
         res.redirect('/');
       });
     } catch(err) {
+      deleteProfileImage(req);
       const { username, email } = req.body;
       let error = err.message;
       res.render('register', { title: 'Register', username, email, error });
@@ -81,6 +91,14 @@ module.exports = {
 
     if (username) user.username = username;
     if (email) user.email = email;
+    if (req.file) {
+      if (user.image.filename) await cloudinary.uploader.destroy(user.image.filename);
+      const { path, filename } = req.file;
+      user.image = {
+        path,
+        filename
+      };
+    }
 
     await user.save();
 
