@@ -12,7 +12,11 @@ const {
   postLogin, 
   getLogout,
   getProfile,
-  updateProfile
+  updateProfile,
+  getForgotPw,
+  putForgotPw,
+  getReset,
+  putReset
 } = require('../controllers');
 
 const {
@@ -51,25 +55,17 @@ router.put('/profile',
   asyncErrorHandler(changePassword),
   asyncErrorHandler(updateProfile));
 
-/* GET /forgot */
-router.get('/forgot', (req, res, next) => {
-  res.send('GET /forgot');
-});
+/* GET /forgot-password */
+router.get('/forgot-password', getForgotPw);
 
-/* PUT forgot */
-router.put('/forgot', (req, res, next) => {
-  res.send('PUT /forgot');
-});
+/* PUT forgot-password */
+router.put('/forgot-password', asyncErrorHandler(putForgotPw));
 
 /* GET /reset/:token */
-router.get('/reset/:token', (req, res, next) => {
-  res.send('GET /reset/:token');
-});
+router.get('/reset/:token', asyncErrorHandler(getReset));
 
 /* PUT /reset/:token */
-router.put('/reset/:token', (req, res, next) => {
-  res.send('PUT /reset/:token');
-});
+router.put('/reset/:token', asyncErrorHandler(putReset));
 
 
 

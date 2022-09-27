@@ -14,7 +14,9 @@ const UserSchema = new Schema({
       default: '/images/default-profile.jpg'
     },
     filename: String
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 });
 
 UserSchema.plugin(passportLocalMongoose);
