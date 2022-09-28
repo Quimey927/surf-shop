@@ -3,22 +3,24 @@ const loremIpsum = require('lorem-ipsum').loremIpsum;
 const cities = require('./cities');
 
 async function seedPosts() {
-	await Post.remove({});
+	await Post.deleteMany({});
 
 	for (let i = 1; i <= 600; i++) {
 		const random1000 = Math.floor(Math.random() * 1000);
+		const random5 = Math.floor(Math.random() * 6);
 		const title = `Post number ${i}`;
 		const description = loremIpsum();
 
 		const postData = {
 			title,
 			description,
-			price: 9.99,
 			location: `${cities[random1000].city}, ${cities[random1000].state}`,
 			geometry: {
 				type: 'Point',
 				coordinates: [cities[random1000].longitude, cities[random1000].latitude]
 			},
+			price: random1000,
+			avgRating: random5,
 			author: '63320068c9bf3c5325a03d2d'
 		}
 

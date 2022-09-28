@@ -5,7 +5,7 @@ const mongoosePaginate = require('mongoose-paginate');
 
 const PostSchema = new Schema({
   title: String,
-  price: String,
+  price: Number,
   description: String,
   images: [ { path: String, filename: String } ],
   location: String,
@@ -39,8 +39,6 @@ const PostSchema = new Schema({
   }
 });
 
-PostSchema.plugin(mongoosePaginate);
-
 PostSchema.pre('remove', async function() {
   await Review.remove({
     _id: {
@@ -63,5 +61,9 @@ PostSchema.methods.calculateAvgRating = function() {
   const floorRating = Math.floor(this.avgRating);
   return floorRating;
 }
+
+PostSchema.plugin(mongoosePaginate);
+
+PostSchema.index({ geometry: '2dsphere' });
 
 module.exports = mongoose.model('Post', PostSchema);

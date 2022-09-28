@@ -2,6 +2,13 @@ const Review = require('../models/review');
 const User = require('../models/user');
 const Post = require('../models/post');
 const { cloudinary } = require('../cloudinary');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocodingClient = mbxGeocoding({ accessToken: mapBoxToken });
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string 
+}
 
 module.exports = {
   asyncErrorHandler: (fn) => 
@@ -73,5 +80,79 @@ module.exports = {
 
   deleteProfileImage: async (req) => {
     if (req.file) await cloudinary.uploader.destroy(filename);
+  },
+
+  async searchAndFilterPosts(req, res, next) {
+    const queryKeys = Object.keys(req.query);
+
+    if (queryKeys.length) {
+      const dbQueries = [];
+      let { search, price, avgRating, location, distance  } = req.query;
+
+      if (search) {
+        search = new RegExp(escapeRegExp(search), 'gi');
+        dbQueries.push({ $or: [
+          { title: search },
+          { description: search },
+          { location: search }
+        ]});
+      }
+
+      if (location) {
+        let coordinates;
+        try {
+          if (typeof JSON.parse(location) === 'number') {
+            throw new Error;
+          }
+          location = JSON.parse(location);
+          coordinates = location;
+        } catch(err) {
+          const response = await geocodingClient
+            .forwardGeocode({
+              query: location,
+              limit: 1
+            })
+            .send();
+          coordinates = response.body.features[0].geometry.coordinates;
+        }
+
+        let maxDistance = distance || 25;
+        // we need to convert the distance to meters, one mile is approximately 1609.34 meters
+        maxDistance *= 1609.34;
+        
+        dbQueries.push({
+          geometry: {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates
+              },
+              $maxDistance: maxDistance
+            }
+          }
+        });
+      }
+
+      if (price) {
+        if (price.min) dbQueries.push({ price: { $gte: price.min } });
+        if (price.max) dbQueries.push({ price: { $lte: price.max } });
+      }
+
+      if (avgRating) {
+        dbQueries.push({ avgRating: { $in: avgRating } });
+      }
+  
+      // pass database query to next middleware in route's middleware chain which is the postIndex method from /controllers/postsController.js
+      res.locals.dbQuery = dbQueries.length ? { $and: dbQueries } : {};
+    }
+    // pass req.query to the view as a local variable to be used in the searchAndFilter.ejs partial. This allows us to maintain the state of the searchAndFilter form
+    res.locals.query = req.query;
+  
+    // build the paginateUrl for paginatePosts partial
+    // first remove 'page' string value from queryKeys array, if it exists
+    queryKeys.splice(queryKeys.indexOf('page'), 1);
+    const delimiter = queryKeys.length ? '&' : '?';
+    res.locals.paginateUrl = req.originalUrl.replace(/(\?|\&)page=\d+/g, '') + `${delimiter}page=`;
+    next();
   }
 }
