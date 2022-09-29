@@ -1,18 +1,32 @@
 <% layout('layouts/boilerplate') -%>
 
-<form action="/login" method="POST">
-  <div>
-    <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Username" required>
+<div class="container-fluid justify-content-center align-items-center my-3">
+  <div class="row flex-fill">
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <div class="card">
+        <img src="/images/card-image.jpeg" alt="Surf Image">
+        <div class="card-body">
+          <h5 class="card-title text-center">Login</h5>
+          <form action="/login" method="POST">
+            <div class="mb-3">
+              <label class="form-label" for="username">Username: </label>
+              <input class="form-control" type="text" id="username" name="username" placeholder="Username" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="password">Password: </label>
+              <input class="form-control" type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+          
+            <div class="d-grid mb-3">
+              <input class="btn btn-info" type="submit">
+            </div>
+          </form>
+          
+          <div>
+            <a href="/forgot-password">Forgot Password?</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div>
-    <label for="password">Password: </label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
-  </div>
-
-  <input type="submit">
-</form>
-
-<div>
-  <a href="/forgot-password">Forgot Password?</a>
 </div>

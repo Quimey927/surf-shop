@@ -2,7 +2,7 @@ const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/light-v9',
   center: [-98.55562, 39.809734],
-  zoom: 3.3
+  zoom: window.innerWidth < 700 ? 2.7 : 3.3
 });
 
 map.addControl(new MapboxGeocoder({
@@ -120,3 +120,8 @@ map.on('load', function() {
   map.on('mouseenter', 'unclustered-point', mouseenterCursor);
   map.on('mouseleave', 'unclustered-point', mouseLeaveCursor);
 });
+
+// Disable zoom from mouse scrollwheel
+map.scrollZoom.disable();
+// Add zoom and rotation controls to the map
+map.addControl(new mapboxgl.NavigationControl());

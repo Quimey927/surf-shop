@@ -1,17 +1,27 @@
 <% layout('layouts/boilerplate') -%>
 
-<h1>Reset Password</h1>
-
-<form action="/reset/<%= token %>?_method=PUT" method="POST">
-  <div>
-    <label for="password">New Password: </label>
-    <input type="password" name="password" id="password" placeholder="New password" autofocus>
+<div class="container-fluid justify-content-center align-items-center my-3">
+  <div class="row flex-fill">
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <div class="card">
+        <img src="/images/card-image.jpeg" alt="Surf Image">
+        <div class="card-body">
+          <h5 class="card-title text-center">Reset Password</h5>
+          <form action="/reset/<%= token %>?_method=PUT" method="POST">
+            <div class="mb-3">
+              <label class="form-label" for="password">New Password: </label>
+              <input class="form-control" type="password" name="password" id="password" placeholder="New password" autofocus>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="confirm">Confirm Password: </label>
+              <input class="form-control" type="password" name="confirm" id="confirm" placeholder="Confirm password">
+            </div>
+            <div class="d-grid mb-3">
+              <input class="btn btn-info" type="submit" value="Update Password">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-  <div>
-    <label for="confirm">Confirm Password: </label>
-    <input type="password" name="confirm" id="confirm" placeholder="Confirm password">
-  </div>
-  <div>
-    <input type="submit" value="Update Password">
-  </div>
-</form>
+</div>

@@ -21,7 +21,12 @@ async function seedPosts() {
 			},
 			price: random1000,
 			avgRating: random5,
-			author: '63320068c9bf3c5325a03d2d'
+			author: '63320068c9bf3c5325a03d2d',
+			images: [
+				{
+					path: 'https://res.cloudinary.com/devsprout/image/upload/v1561315599/surf-shop/surfboard.jpg'
+				}
+			]
 		}
 
 		const post = new Post(postData);

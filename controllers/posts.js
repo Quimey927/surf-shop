@@ -59,17 +59,18 @@ module.exports = {
 
   // Posts Show
   async postShow(req, res, next) {
-    let post = await Post.findById(req.params.id).populate({
-      path: 'reviews',
-      options: { sort: { '_id': -1 } },
-      populate: {
-        path: 'author',
-        model: 'User'
-      }
-    });
+    let post = await Post.findById(req.params.id)
+      .populate({
+        path: 'reviews',
+        options: { sort: { '_id': -1 } },
+        populate: {
+          path: 'author',
+          model: 'User'
+        }
+      })
+      .populate('author');
 
-    // const floorRating = post.calculateAvgRating();
-    const floorRating = post.avgRating;
+    const floorRating = post.calculateAvgRating();
     res.render('posts/show', { post, mapBoxToken, floorRating });
   },
 

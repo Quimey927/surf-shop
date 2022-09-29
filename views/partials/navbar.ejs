@@ -1,26 +1,24 @@
-<style>
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    display: inline;
-    padding: 5px;
-  }
-</style>
-
-<ul id="navbar">
-  <li><a href="/">Home</a></li>
-  <li><a href="/posts">Posts</a></li>
-  <% if (!currentUser) { %>
-    <li><a href="/register">Register</a></li>
-    <li><a href="/login">Login</a></li>
-  <% } else { %>
-    <li><a href="/posts/new">New Post</a></li>
-    <li><a href="/profile">Profile</a></li> 
-    <li><a href="/logout">Logout</a></li>
-    Welcome, <%= currentUser.username %>!
-  <% } %>
-</ul>
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="fa-solid fa-water"></i>Surf Shop</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts">Posts</a>
+      </div>
+      <div class="navbar-nav ms-auto">
+        <% if (!currentUser) { %>
+          <a href="/register" class="nav-link">Register</a>
+        <a href="/login" class="nav-link">Login</a>
+        <% } else { %>
+          <a href="/posts/new" class="nav-link">New Post</a>
+          <a href="/profile" class="nav-link">Profile</a>
+          <a href="/logout" class="nav-link">Logout</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>

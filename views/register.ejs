@@ -1,22 +1,36 @@
 <% layout('layouts/boilerplate') -%>
 
-<form action="/register" method="POST" enctype="multipart/form-data">
-  <div>
-    <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Username" value="<%= username %>" required>
+<div class="container-fluid justify-content-center align-items-center my-3">
+  <div class="row flex-fill">
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <div class="card">
+        <img src="/images/card-image.jpeg" alt="Surf Image">
+        <div class="card-body">
+          <h5 class="card-title text-center">Register</h5>
+          <form action="/register" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label" for="username">Username: </label>
+              <input class="form-control" type="text" id="username" name="username" placeholder="Username" value="<%= username %>" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="password">Password: </label>
+              <input class="form-control" type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="email">Email: </label>
+              <input class="form-control" type="email" id="email" name="email" placeholder="Email" value="<%= email %>" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="image">Image: </label>
+              <input class="form-control" type="file" id="image" name="image">
+            </div>
+          
+            <div class="d-grid mb-3">
+              <input class="btn btn-info" type="submit">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-  <div>
-    <label for="password">Password: </label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
-  </div>
-  <div>
-    <label for="email">Email: </label>
-    <input type="email" id="email" name="email" placeholder="Email" value="<%= email %>" required>
-  </div>
-  <div>
-    <label for="image">Image: </label>
-    <input type="file" id="image" name="image">
-  </div>
-
-  <input type="submit">
-</form>
+</div>

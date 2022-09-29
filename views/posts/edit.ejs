@@ -1,41 +1,52 @@
 <% layout('layouts/boilerplate') -%>
 
-<h1>Edit Post!</h1>
+<div class="container-fluid justify-content-center align-items-center my-3">
+  <div class="row flex-fill">
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Edit Post</h5>
+          <form action="/posts/<%= post.id %>?_method=PUT" method="POST" id="postEditForm" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label" for="title">Title: </label>
+              <input class="form-control" type="text" id="title" name="post[title]" placeholder="Title" value="<%= post.title %>">
+            </div>
 
-<form action="/posts/<%= post.id %>?_method=PUT" method="POST" id="postEditForm" enctype="multipart/form-data">
-  <div>
-    <label for="title">Title: </label>
-    <input type="text" id="title" name="post[title]" placeholder="Title" value="<%= post.title %>">
-  </div>
+            <div class="mb-3">
+              <label class="form-label" for="price">Price: </label>
+              <input class="form-control" type="number" id="price" name="post[price]" step=".01" placeholder="Price" value="<%= post.price %>">
+            </div>
 
-  <div>
-    <label for="price">Price: </label>
-    <input type="number" id="price" name="post[price]" step=".01" placeholder="Price" value="<%= post.price %>">
-  </div>
+            <div class="mb-3">
+              <label class="form-label" for="imageUpload">Images: </label>
+              <input class="form-control" type="file" id="imageUpload" accept="images/*" name="images" multiple />
+              <div>
+                <% post.images.forEach(function(image, i) { %>
+                  <img src="<%= image.path %>" alt="" width="100px">
+                  <label for="image<%= i %>">Delete?</label>
+                  <input type="checkbox" name="deleteImages[]" class="imageDeleteCheckbox" id="image<%= i %>" value="<%= image.filename %>">
+                <% }); %>
+              </div>
+            </div>
 
-  <div>
-    <label for="imageUpload">Images: </label>
-    <input type="file" id="imageUpload" accept="images/*" name="images" multiple />
-    <div>
-      <% post.images.forEach(function(image, i) { %>
-        <img src="<%= image.path %>" alt="" width="100px">
-        <label for="image<%= i %>">Delete?</label>
-        <input type="checkbox" name="deleteImages[]" class="imageDeleteCheckbox" id="image<%= i %>" value="<%= image.filename %>">
-      <% }); %>
+            <div class="mb-3">
+              <label class="form-label" for="description">Description: </label>
+              <textarea class="form-control" name="post[description]" id="description" placeholder="Description"><%= post.description %></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="location">Location</label>
+              <input class="form-control" type="text" id="location" name="post[location]" placeholder="Location" value="<%= post.location %>">
+            </div>
+
+            <div class="d-grid mb-3">
+              <input class="btn btn-info" type="submit">
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div>
-    <label for="description">Description: </label>
-    <textarea name="post[description]" id="description" placeholder="Description"><%= post.description %></textarea>
-  </div>
-
-  <div>
-    <label for="location">Location</label>
-    <input type="text" id="location" name="post[location]" placeholder="Location" value="<%= post.location %>">
-  </div>
-
-  <input type="submit">
-</form>
+</div>
 
 <script src="/javascripts/post-edit.js"></script>
