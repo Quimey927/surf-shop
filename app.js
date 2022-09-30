@@ -25,7 +25,7 @@ const app = express();
 
 // Connect to the database
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/surf-shop';
-mongoose.connect('mongodb://127.0.0.1:27017/surf-shop');
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
