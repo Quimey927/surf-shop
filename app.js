@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const createError = require('http-errors');
 const express = require('express');
@@ -12,8 +14,7 @@ const User = require('./models/user');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-// const seedPosts = require('./seeds');
-// seedPosts();
+const MongoStore = require('connect-mongo');
 
 // Require routes
 const indexRouter = require('./routes/index');
@@ -23,7 +24,8 @@ const reviewsRouter = require('./routes/reviews');
 const app = express();
 
 // Connect to the database
-mongoose.connect('mongodb://127.0.0.1:27017/surf-shop');
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/surf-shop';
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
@@ -49,12 +51,36 @@ app.use(methodOverride('_method'));
 // Add moment to every view
 app.locals.moment = require('moment');
 
-// Configure Passport and Sessions
-app.use(session({
-  secret: process.env.SECRET,
+// Configure Passport, Sessions and Store
+const secret = process.env.SECRET || 'thisshouldbeabettersecret';
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret
+  }
+});
+
+store.on('error', function (err) {
+  console.log('SESSION STORE ERROR', err)
+});
+
+const sessionConfig = {
+  store,
+  name: 'session',
+  secret,
   resave: false,
-  saveUninitialized: true
-}));
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    // secure: true;
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+
+app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -66,11 +92,6 @@ passport.deserializeUser(User.deserializeUser());
 
 // set local variables middleware
 app.use(function(req, res, next) {
-  // Only for development environment
-  // req.user = {
-  //   '_id': '63320068c9bf3c5325a03d2d',
-  //   'username': 'Quimey',
-  // }
   res.locals.currentUser = req.user;
   
   // set default page title 
@@ -97,14 +118,6 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  // res.locals.message = err.message;
-  // res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  // res.status(err.status || 500);
-  // res.render('error');
-
   console.log(err);
   req.session.error = err.message;
   res.redirect('back');
