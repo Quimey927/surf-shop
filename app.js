@@ -15,6 +15,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const MongoStore = require('connect-mongo');
+const helmet = require('helmet');
 
 // Require routes
 const indexRouter = require('./routes/index');
@@ -81,6 +82,36 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
+
+// configure Content Security Policy
+
+const scriptSrcUrls = ['https://stackpath.bootstrapcdn.com/', 'https://api.tiles.mapbox.com/', 'https://api.mapbox.com/', 'https://kit.fontawesome.com/', 'https://cdnjs.cloudflare.com/', 'https://cdn.jsdelivr.net/', 'https://res.cloudinary.com/dejhmgbbc/'];
+const styleSrcUrls = ['https://kit-free.fontawesome.com/', 'https://stackpath.bootstrapcdn.com/', 'https://api.mapbox.com/', 'https://api.tiles.mapbox.com/', 'https://fonts.googleapis.com/', 'https://use.fontawesome.com/', 'https://cdn.jsdelivr.net/', 'https://res.cloudinary.com/dejhmgbbc/'];
+const connectSrcUrls = ['https://*.tiles.mapbox.com', 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://res.cloudinary.com/dejhmgbbc/'];
+const fontSrcUrls = ['https://res.cloudinary.com/dejhmgbbc/'];
+
+app.use(
+  helmet.contentSecurityPolicy({
+      directives : {
+          defaultSrc : [],
+          connectSrc : [ "'self'", ...connectSrcUrls ],
+          scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+          styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+          workerSrc  : [ "'self'", "blob:" ],
+          objectSrc  : [],
+          imgSrc     : [
+              "'self'",
+              "blob:",
+              "data:",
+              "https://res.cloudinary.com/dejhmgbbc/",
+              "https://images.unsplash.com/"
+          ],
+          fontSrc    : [ "'self'", ...fontSrcUrls ],
+          mediaSrc   : [ "https://res.cloudinary.com/dejhmgbbc/" ],
+          childSrc   : [ "blob:" ]
+      }
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
