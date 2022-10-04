@@ -85,33 +85,7 @@ app.use(session(sessionConfig));
 
 // configure Content Security Policy
 
-const scriptSrcUrls = ['https://stackpath.bootstrapcdn.com/', 'https://api.tiles.mapbox.com/', 'https://api.mapbox.com/', 'https://kit.fontawesome.com/', 'https://cdnjs.cloudflare.com/', 'https://cdn.jsdelivr.net/', 'https://res.cloudinary.com/dejhmgbbc/'];
-const styleSrcUrls = ['https://kit-free.fontawesome.com/', 'https://stackpath.bootstrapcdn.com/', 'https://api.mapbox.com/', 'https://api.tiles.mapbox.com/', 'https://fonts.googleapis.com/', 'https://use.fontawesome.com/', 'https://cdn.jsdelivr.net/', 'https://res.cloudinary.com/dejhmgbbc/'];
-const connectSrcUrls = ['https://*.tiles.mapbox.com', 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://res.cloudinary.com/dejhmgbbc/'];
-const fontSrcUrls = ['https://res.cloudinary.com/dejhmgbbc/'];
 
-app.use(
-  helmet.contentSecurityPolicy({
-      directives : {
-          defaultSrc : [],
-          connectSrc : [ "'self'", ...connectSrcUrls ],
-          scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
-          styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
-          workerSrc  : [ "'self'", "blob:" ],
-          objectSrc  : [],
-          imgSrc     : [
-              "'self'",
-              "blob:",
-              "data:",
-              "https://res.cloudinary.com/dejhmgbbc/",
-              "https://images.unsplash.com/"
-          ],
-          fontSrc    : [ "'self'", ...fontSrcUrls ],
-          mediaSrc   : [ "https://res.cloudinary.com/dejhmgbbc/" ],
-          childSrc   : [ "blob:" ]
-      }
-  })
-);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -138,23 +112,7 @@ app.use(function(req, res, next) {
 })
 
 // Add api.mapbox.com as a supported source in your project.
-const CSP = 'Content-Security-Policy';
-const POLICY =
-  "default-src 'self' https://*.mapbox.com ;" +
-  "base-uri 'self';block-all-mixed-content;" +
-  "font-src 'self' https: data:;" +
-  "frame-ancestors 'self';" +
-  "img-src http://localhost:8000 'self' blob: data:;" +
-  "object-src 'none';" +
-  "script-src https: cdn.jsdelivr.net cdnjs.cloudflare.com api.mapbox.com 'self' blob: ;" +
-  "script-src-attr 'none';" +
-  "style-src 'self' https: 'unsafe-inline';" +
-  'upgrade-insecure-requests;';
 
-app.use((req, res, next) => {
-    res.setHeader(CSP, POLICY);
-    next();
-  });
 
 //Mount Routes
 app.use('/', indexRouter);
