@@ -31,7 +31,7 @@
 </div>
 
 <script>
-  mapboxgl.accessToken = "<%= mapBoxToken %>";
+  mapboxgl.accessToken = '<%- mapBoxToken %>'';
   const posts = { features: <%- JSON.stringify(posts.docs) %> };
 </script>
 
