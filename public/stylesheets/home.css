@@ -1,4 +1,6 @@
+
 main {
+  font-family: 'Henny Penny', cursive;
   height: 500px;
   background-image: url('/images/home.jpg');
   background-size: cover;
@@ -35,4 +37,18 @@ main {
   .navbar-brand {
     display: flex !important;
   }
+}
+
+.home-title,
+.home-subtitle {
+  
+  color: #0273ac;
+}
+
+.home-title {
+  font-size: 3.5rem;
+}
+
+.home-subtitle {
+  font-size: 2rem;
 }
