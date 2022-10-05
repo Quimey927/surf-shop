@@ -1,6 +1,8 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
 
 main {
-  font-family: 'Henny Penny', cursive;
   height: 500px;
   background-image: url('/images/home.jpg');
   background-size: cover;
@@ -11,6 +13,10 @@ main {
 
 .home-navbar {
   font-size: 0.8rem;
+}
+
+.navbar-brand {
+  font-family: 'Henny Penny', cursive;
 }
 
 #map {
@@ -28,27 +34,30 @@ main {
   margin: 0 auto;
 }
 
-@media (min-width: 500px) {
-  .home-navbar {
-    justify-content: space-around !important;
-    font-size: 1rem;
-  }
-
-  .navbar-brand {
-    display: flex !important;
-  }
-}
-
 .home-title,
 .home-subtitle {
-  
   color: #0273ac;
 }
 
 .home-title {
-  font-size: 3.5rem;
+  font-family: 'Henny Penny', cursive;
 }
 
-.home-subtitle {
-  font-size: 2rem;
+
+@media (min-width: 500px) {
+  .home-navbar {
+    justify-content: space-around !important;
+  }
+  
+  .navbar-brand {
+    display: flex !important;
+  }
+  
+  .home-title {
+    font-size: 3.5rem;
+  }
+  
+  .home-subtitle {
+    font-size: 2rem;
+  }
 }
