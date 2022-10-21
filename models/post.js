@@ -9,6 +9,7 @@ const PostSchema = new Schema({
   description: String,
   images: [ { path: String, filename: String } ],
   location: String,
+  date: String,
   geometry: {
     type: {
       type: String,

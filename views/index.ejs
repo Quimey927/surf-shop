@@ -55,7 +55,7 @@
           <div class="card col-md-4 post-image mb-3">
             <div class="position-relative">
               <img src="<%= post.images[0].path %>" class="card-img-top" alt="Post image">
-              <div class="date-pos bg-info-gradiant position-absolute top-0 left-0 bg-info m-2 p-2 rounded-pill"><%= moment(post._id).format('MMM') %><span><%= moment(post._id).format('D') %></span></div>
+              <div class="date-pos bg-info-gradiant position-absolute top-0 left-0 bg-info m-2 p-2 rounded-pill"><%= post.date.split(' ')[0] %><span> <%= post.date.split(' ')[1] %></span></div>
             </div>
             <div class="card-body">
               <h5 class="card-title"><%= post.title %></h5>
